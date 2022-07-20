@@ -12,7 +12,7 @@ class Calculator:
   
         # Frames
         self.screen_top_frame   = ttk.Frame(self.window, style='FrameA.TFrame')
-        self.screen_right_frame = ttk.Frame(self.window, style='FrameB.TFrame')
+        self.screen_right_frame = ttk.Frame(self.window, style='FrameA.TFrame')
         self.numbers_frame      = ttk.Frame(self.window, style='FrameC.TFrame')
         self.operations_A_frame = ttk.Frame(self.window, style='FrameD.TFrame')
         self.operations_B_frame = ttk.Frame(self.window, style='FrameE.TFrame')
@@ -31,19 +31,24 @@ class Calculator:
             tk.Button(self.numbers_frame, text='3', command=lambda: print('3')),
         ]
         
-        # Entry
-        self.screen_top = ttk.Entry(self.screen_top_frame)
+        # Top screen
+        self.screen_top = ttk.Label(self.screen_top_frame, text='0', anchor='e', style='TopScreen.TLabel')
                 
         self.operations_buttons = []
 
     def setStyle(self):
+        self.window.configure(bg=settings.COLOR_GRAY)
+
         style = ttk.Style()
-        style.configure('FrameA.TFrame', background='red')
+        style.configure('FrameA.TFrame', background=settings.COLOR_GRAY)
         style.configure('FrameB.TFrame', background='green')
         style.configure('FrameC.TFrame', background='blue')
         style.configure('FrameD.TFrame', background='yellow')
         style.configure('FrameE.TFrame', background='purple')
         style.configure('FrameF.TFrame', background='orange')
+
+        style.configure('TopScreen.TLabel', background=settings.COLOR_LIGHTGRAY, font=settings.TOP_SCREEN_FONT)
+        
 
     def placeComponents(self):
         self.screen_top_frame  .place(x=0    * self.width, y=0   * self.height, width=0.5  * self.width, height=0.2 * self.height)
@@ -55,6 +60,8 @@ class Calculator:
 
         self.screen_top.place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.5 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
 
+        self.window.update()
+
     def setBindings(self):
         self.window.bind('<Escape>', self.onExit)
         self.window.bind('<Configure>', self.onResize)
@@ -64,8 +71,8 @@ class Calculator:
         height      = self.window.winfo_height()
         prev_width  = self.width
         prev_height = self.height
-        self.width  = width  if width  > settings.WINDOW_MIN_SIZE[0] else prev_width
-        self.height = height if height > settings.WINDOW_MIN_SIZE[1] else prev_height
+        self.width  = width  if width  >= settings.WINDOW_MIN_SIZE[0] else prev_width
+        self.height = height if height >= settings.WINDOW_MIN_SIZE[1] else prev_height
 
         if self.width != prev_width or self.height != prev_height:
             self.window.geometry('%ix%i' % (self.width, self.height))
