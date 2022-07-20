@@ -3,16 +3,13 @@ from imports import *
 
 class Calculator:
     def __init__(self):
-        self.width, self.height = settings.WINDOW_SIZE
+        self.width, self.height = settings.WINDOW_MIN_SIZE
 
         self.window = tk.Tk()
         self.window.geometry('+%i+%i' % ((self.window.winfo_screenwidth() - self.width) / 2, (self.window.winfo_screenheight() - self.height) / 2))
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
-
-        # Bindings
-        self.window.bind('<Escape>', self.onExit)
-
+  
         # Frames
         self.screen_top_frame   = ttk.Frame(self.window, style='FrameA.TFrame')
         self.screen_right_frame = ttk.Frame(self.window, style='FrameB.TFrame')
@@ -34,22 +31,10 @@ class Calculator:
             tk.Button(self.numbers_frame, text='3', command=lambda: print('3')),
         ]
         
-        # for number in self.number_buttons:
-        #     if tk.Button in range(1,3):
+        # Entry
+        self.screen_top = ttk.Entry(self.screen_top_frame)
                 
-                
-
-
-
         self.operations_buttons = []
-
-    def placeComponents(self):
-        self.screen_top_frame.place(relx=0, rely=0, relwidth=0.5, relheight=0.2)
-        self.screen_right_frame.place(relx=0.5, rely=0, relwidth=0.5, relheight=0.8)
-        self.numbers_frame.place(relx=0, rely=0.4, relwidth=0.35, relheight=0.8)
-        self.operations_A_frame.place(relx=0, rely=0.2, relwidth=0.5, relheight=0.2)
-        self.operations_B_frame.place(relx=0.35, rely=0.4, relwidth=0.15, relheight=0.6)
-        self.operations_C_frame.place(relx=0.5, rely=0.8, relwidth=0.5, relheight=0.2)
 
     def setStyle(self):
         style = ttk.Style()
@@ -60,7 +45,33 @@ class Calculator:
         style.configure('FrameE.TFrame', background='purple')
         style.configure('FrameF.TFrame', background='orange')
 
-    def onExit(self, event):
+    def placeComponents(self):
+        self.screen_top_frame  .place(x=0    * self.width, y=0   * self.height, width=0.5  * self.width, height=0.2 * self.height)
+        self.screen_right_frame.place(x=0.5  * self.width, y=0   * self.height, width=0.5  * self.width, height=0.8 * self.height)
+        self.numbers_frame     .place(x=0    * self.width, y=0.4 * self.height, width=0.35 * self.width, height=0.8 * self.height)
+        self.operations_A_frame.place(x=0    * self.width, y=0.2 * self.height, width=0.5  * self.width, height=0.2 * self.height)
+        self.operations_B_frame.place(x=0.35 * self.width, y=0.4 * self.height, width=0.15 * self.width, height=0.6 * self.height)
+        self.operations_C_frame.place(x=0.5  * self.width, y=0.8 * self.height, width=0.5  * self.width, height=0.2 * self.height)
+
+        self.screen_top.place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.5 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
+
+    def setBindings(self):
+        self.window.bind('<Escape>', self.onExit)
+        self.window.bind('<Configure>', self.onResize)
+
+    def onResize(self, _):
+        width       = self.window.winfo_width()
+        height      = self.window.winfo_height()
+        prev_width  = self.width
+        prev_height = self.height
+        self.width  = width  if width  > settings.WINDOW_MIN_SIZE[0] else prev_width
+        self.height = height if height > settings.WINDOW_MIN_SIZE[1] else prev_height
+
+        if self.width != prev_width or self.height != prev_height:
+            self.window.geometry('%ix%i' % (self.width, self.height))
+            self.placeComponents()
+
+    def onExit(self, _):
         self.window.destroy()
 
     def mainloop(self):
@@ -72,6 +83,7 @@ if __name__ == '__main__':
         calc = Calculator()
         calc.setStyle()
         calc.placeComponents()
+        calc.setBindings()
         
         calc.mainloop()
     except Exception as e:
