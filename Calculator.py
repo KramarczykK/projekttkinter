@@ -10,9 +10,9 @@ class Calculator:
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
 
-        self.number_buttons     = []
-        self.operations_buttons = []
-    
+        # Bindings
+        self.window.bind('<Escape>', self.onExit)
+
         # Frames
         self.screen_top_frame   = ttk.Frame(self.window, style='FrameA.TFrame')
         self.screen_right_frame = ttk.Frame(self.window, style='FrameB.TFrame')
@@ -21,7 +21,16 @@ class Calculator:
         self.operations_B_frame = ttk.Frame(self.window, style='FrameE.TFrame')
         self.operations_C_frame = ttk.Frame(self.window, style='FrameF.TFrame')
 
-        self.window.bind('<Escape>', self.onExit)
+        # Buttons
+        self.number_buttons = [
+            tk.Button(self.number_buttons, text='7', command=lambda: print('7')),
+            
+
+        ]
+
+
+
+        self.operations_buttons = []
 
     def placeComponents(self):
         self.screen_top_frame.place(relx=0, rely=0, relwidth=0.5, relheight=0.2)
