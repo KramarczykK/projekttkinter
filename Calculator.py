@@ -19,13 +19,17 @@ class Calculator:
         self.numbers_frame      = ttk.Frame(self.window, style='FrameC.TFrame')
         self.operations_A_frame = ttk.Frame(self.window, style='FrameD.TFrame')
         self.operations_B_frame = ttk.Frame(self.window, style='FrameE.TFrame')
+        self.operations_C_frame = ttk.Frame(self.window, style='FrameF.TFrame')
+
+        self.window.bind('<Escape>', self.onExit)
 
     def placeComponents(self):
         self.screen_top_frame.place(relx=0, rely=0, relwidth=0.5, relheight=0.2)
-        self.screen_right_frame.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
-        self.numbers_frame.place(relx=0, rely=0.2, relwidth=0.25, relheight=0.8)
-        self.operations_A_frame.place(relx=0.25, rely=0.2, relwidth=0.25, relheight=0.4)
-        self.operations_B_frame.place(relx=0.25, rely=0.6, relwidth=0.25, relheight=0.4)
+        self.screen_right_frame.place(relx=0.5, rely=0, relwidth=0.5, relheight=0.8)
+        self.numbers_frame.place(relx=0, rely=0.4, relwidth=0.35, relheight=0.8)
+        self.operations_A_frame.place(relx=0, rely=0.2, relwidth=0.5, relheight=0.2)
+        self.operations_B_frame.place(relx=0.35, rely=0.4, relwidth=0.15, relheight=0.6)
+        self.operations_C_frame.place(relx=0.5, rely=0.8, relwidth=0.5, relheight=0.2)
 
     def setStyle(self):
         style = ttk.Style()
@@ -34,6 +38,10 @@ class Calculator:
         style.configure('FrameC.TFrame', background='blue')
         style.configure('FrameD.TFrame', background='yellow')
         style.configure('FrameE.TFrame', background='purple')
+        style.configure('FrameF.TFrame', background='orange')
+
+    def onExit(self, event):
+        self.window.destroy()
 
     def mainloop(self):
         self.window.mainloop()
