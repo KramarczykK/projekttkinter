@@ -56,20 +56,23 @@ class Calculator:
         style.configure('FrameE.TFrame', background='purple')
         style.configure('FrameF.TFrame', background='orange')
 
-        style.configure('TopScreen.TLabel', background=settings.COLOR_LIGHTGRAY, font=settings.TOP_SCREEN_FONT)
+        style.configure('TopScreen.TLabel', background=settings.COLOR_CREME, font=settings.TOP_SCREEN_FONT)
+
+        for button in self.number_buttons:
+            button.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
         
     def placeComponents(self):
         # Frames
-        self.screen_top_frame  .place(x=0    * self.width, y=0   * self.height, width=0.5  * self.width, height=0.2 * self.height)
-        self.screen_right_frame.place(x=0.5  * self.width, y=0   * self.height, width=0.5  * self.width, height=0.8 * self.height)
-        self.numbers_frame     .place(x=0    * self.width, y=0.4 * self.height, width=0.35 * self.width, height=0.6 * self.height)
-        self.operations_A_frame.place(x=0    * self.width, y=0.2 * self.height, width=0.5  * self.width, height=0.2 * self.height)
-        self.operations_B_frame.place(x=0.35 * self.width, y=0.4 * self.height, width=0.15 * self.width, height=0.6 * self.height)
-        self.operations_C_frame.place(x=0.5  * self.width, y=0.8 * self.height, width=0.5  * self.width, height=0.2 * self.height)
+        self.screen_top_frame  .place(x=0   * self.width, y=0   * self.height, width=0.4 * self.width, height=0.2 * self.height)
+        self.screen_right_frame.place(x=0.4 * self.width, y=0   * self.height, width=0.6 * self.width, height=0.8 * self.height)
+        self.numbers_frame     .place(x=0   * self.width, y=0.4 * self.height, width=0.3 * self.width, height=0.6 * self.height)
+        self.operations_A_frame.place(x=0   * self.width, y=0.2 * self.height, width=0.4 * self.width, height=0.2 * self.height)
+        self.operations_B_frame.place(x=0.3 * self.width, y=0.4 * self.height, width=0.1 * self.width, height=0.6 * self.height)
+        self.operations_C_frame.place(x=0.4 * self.width, y=0.8 * self.height, width=0.6 * self.width, height=0.2 * self.height)
 
         # Buttons
-        numbers_frame_width  = 0.35 * self.width
-        numbers_frame_height = 0.6  * self.height
+        numbers_frame_width  = 0.3 * self.width
+        numbers_frame_height = 0.6 * self.height
         j = 0
         for i, button in enumerate(self.number_buttons):
             button.place(x=(i % 3) / 3 * numbers_frame_width, y=j * numbers_frame_height, width=numbers_frame_width / 3, height=numbers_frame_height / 4)
@@ -77,8 +80,8 @@ class Calculator:
                 j += 0.25
 
         # Screens
-        self.screen_top  .place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.5 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
-        self.screen_right.place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.5 * self.width - 2 * settings.SCREEN_OFFSET, height=0.8 * self.height - 2 * settings.SCREEN_OFFSET)
+        self.screen_top  .place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.4 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
+        self.screen_right.place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.6 * self.width - 2 * settings.SCREEN_OFFSET, height=0.8 * self.height - 2 * settings.SCREEN_OFFSET)
 
         self.window.update()
 
@@ -86,6 +89,31 @@ class Calculator:
         self.window.bind('<Escape>', self.onExit)
         self.window.bind('<Configure>', self.onResize)
         self.window.bind('q', lambda _: self.drawChart())
+
+        self.number_buttons[0]. bind('<Enter>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[0]. bind('<Leave>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[1]. bind('<Enter>', lambda _: self.number_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[1]. bind('<Leave>', lambda _: self.number_buttons[1]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[2]. bind('<Enter>', lambda _: self.number_buttons[2]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[2]. bind('<Leave>', lambda _: self.number_buttons[2]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[3]. bind('<Enter>', lambda _: self.number_buttons[3]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[3]. bind('<Leave>', lambda _: self.number_buttons[3]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[4]. bind('<Enter>', lambda _: self.number_buttons[4]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[4]. bind('<Leave>', lambda _: self.number_buttons[4]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[5]. bind('<Enter>', lambda _: self.number_buttons[5]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[5]. bind('<Leave>', lambda _: self.number_buttons[5]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[6]. bind('<Enter>', lambda _: self.number_buttons[6]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[6]. bind('<Leave>', lambda _: self.number_buttons[6]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[7]. bind('<Enter>', lambda _: self.number_buttons[7]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[7]. bind('<Leave>', lambda _: self.number_buttons[7]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[8]. bind('<Enter>', lambda _: self.number_buttons[8]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[8]. bind('<Leave>', lambda _: self.number_buttons[8]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[9]. bind('<Enter>', lambda _: self.number_buttons[9]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[9]. bind('<Leave>', lambda _: self.number_buttons[9]. configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[10].bind('<Enter>', lambda _: self.number_buttons[10].configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[10].bind('<Leave>', lambda _: self.number_buttons[10].configure(bg=settings.COLOR_GRAY))
+        self.number_buttons[11].bind('<Enter>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_LIGHTGRAY))
+        self.number_buttons[11].bind('<Leave>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_GRAY))
 
     def onResize(self, _):
         width       = self.window.winfo_width()
