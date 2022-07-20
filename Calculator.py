@@ -23,10 +23,21 @@ class Calculator:
 
         # Buttons
         self.number_buttons = [
-            tk.Button(self.number_buttons, text='7', command=lambda: print('7')),
-            
-
+            tk.Button(self.numbers_frame, text='7', command=lambda: print('7')),
+            tk.Button(self.numbers_frame, text='8', command=lambda: print('8')),
+            tk.Button(self.numbers_frame, text='9', command=lambda: print('9')),
+            tk.Button(self.numbers_frame, text='4', command=lambda: print('4')),
+            tk.Button(self.numbers_frame, text='5', command=lambda: print('5')),
+            tk.Button(self.numbers_frame, text='6', command=lambda: print('6')),
+            tk.Button(self.numbers_frame, text='1', command=lambda: print('1')),
+            tk.Button(self.numbers_frame, text='2', command=lambda: print('2')),
+            tk.Button(self.numbers_frame, text='3', command=lambda: print('3')),
         ]
+        
+        # for number in self.number_buttons:
+        #     if tk.Button in range(1,3):
+                
+                
 
 
 
