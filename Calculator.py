@@ -1,3 +1,4 @@
+from tkinter import CENTER
 from imports import *
 
 
@@ -9,6 +10,10 @@ class Calculator:
         self.window.geometry('+%i+%i' % ((self.window.winfo_screenwidth() - self.width) / 2, (self.window.winfo_screenheight() - self.height) / 2))
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
+
+        # images
+        self.photo = tk.PhotoImage(file = r"C:\Program Files\python\tkinter\projekttkinter\cofka.png")
+        
   
         # Frames
         self.screen_top_frame   = ttk.Frame(self.window, style='FrameA.TFrame')
@@ -34,7 +39,23 @@ class Calculator:
             tk.Button(self.numbers_frame, text='.'  , command=lambda: print('.')),
         ]
         
-        self.operations_buttons = []
+        self.operations_buttons = [
+            tk.Button(self.operations_B_frame, text='X'  , command=lambda: print('X')),
+            tk.Button(self.operations_B_frame, text='-'  , command=lambda: print('-')),
+            tk.Button(self.operations_B_frame, text='+'  , command=lambda: print('+')),
+            tk.Button(self.operations_B_frame, text='='  , command=lambda: print('=')),
+        ]
+
+        self.functions_buttons = [
+            tk.Button(self.operations_A_frame, text='%'  , command=lambda: print('%')),
+            tk.Button(self.operations_A_frame, text='CE'  , command=lambda: print('CE')),
+            tk.Button(self.operations_A_frame, text='C'  , command=lambda: print('C')),
+            tk.Button(self.operations_A_frame, text='Click me', image = self.photo  , command=lambda: print('photo')),
+            tk.Button(self.operations_A_frame, text='1/x'  , command=lambda: print('1/x')),    
+            tk.Button(self.operations_A_frame, text='x^2'  , command=lambda: print('x^2')),
+            tk.Button(self.operations_A_frame, text='sqrt(2)'  , command=lambda: print('sqrt(2)')),
+            tk.Button(self.operations_A_frame, text='/'  , command=lambda: print('/')),
+        ]
 
         # Top screen
         self.screen_top = ttk.Label(self.screen_top_frame, text='0', anchor='e', style='TopScreen.TLabel')
@@ -61,6 +82,12 @@ class Calculator:
         for button in self.number_buttons:
             button.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
         
+        for button_operation in self.operations_buttons:
+            button_operation.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
+    
+        for button_function in self.functions_buttons:
+            button_function.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
+    
     def placeComponents(self):
         # Frames
         self.screen_top_frame  .place(x=0   * self.width, y=0   * self.height, width=0.4 * self.width, height=0.2 * self.height)
@@ -79,6 +106,24 @@ class Calculator:
             if i % 3 == 2:
                 j += 0.25
 
+        # Operation buttons
+        operation_frame_width  = 0.1 * self.width
+        operation_frame_height = 0.6  * self.height
+        j = 0
+        for i, button_operation in enumerate(self.operations_buttons):
+            button_operation.place(x= 0, y=j * operation_frame_height, width = operation_frame_width, height = operation_frame_height / 4)
+            if i % 1 == 0:
+                j += 0.25
+
+        # Function buttons
+        function_frame_width  = 0.4 * self.width
+        function_frame_height = 0.2  * self.height
+        j = 0
+        for i, button_function in enumerate(self.functions_buttons):
+            button_function.place(x=(i % 4) / 4 * function_frame_width, y=j * function_frame_height, width = function_frame_width / 4, height = function_frame_height / 2)
+            if i % 4 == 3:
+                j += 0.5       
+
         # Screens
         self.screen_top  .place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.4 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
         self.screen_right.place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.6 * self.width - 2 * settings.SCREEN_OFFSET, height=0.8 * self.height - 2 * settings.SCREEN_OFFSET)
@@ -90,6 +135,7 @@ class Calculator:
         self.window.bind('<Configure>', self.onResize)
         self.window.bind('q', lambda _: self.drawChart())
 
+        # number buttons
         self.number_buttons[0]. bind('<Enter>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.number_buttons[0]. bind('<Leave>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_GRAY))
         self.number_buttons[1]. bind('<Enter>', lambda _: self.number_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
@@ -115,6 +161,34 @@ class Calculator:
         self.number_buttons[11].bind('<Enter>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_LIGHTGRAY))
         self.number_buttons[11].bind('<Leave>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_GRAY))
 
+        # operation buttons
+        self.operations_buttons[0]. bind('<Enter>', lambda _: self.operations_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.operations_buttons[0]. bind('<Leave>', lambda _: self.operations_buttons[0]. configure(bg=settings.COLOR_GRAY))
+        self.operations_buttons[1]. bind('<Enter>', lambda _: self.operations_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.operations_buttons[1]. bind('<Leave>', lambda _: self.operations_buttons[1]. configure(bg=settings.COLOR_GRAY))
+        self.operations_buttons[2]. bind('<Enter>', lambda _: self.operations_buttons[2]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.operations_buttons[2]. bind('<Leave>', lambda _: self.operations_buttons[2]. configure(bg=settings.COLOR_GRAY))
+        self.operations_buttons[3]. bind('<Enter>', lambda _: self.operations_buttons[3]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.operations_buttons[3]. bind('<Leave>', lambda _: self.operations_buttons[3]. configure(bg=settings.COLOR_GRAY))
+
+        # function buttons 
+        self.functions_buttons[0]. bind('<Enter>', lambda _: self.functions_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[0]. bind('<Leave>', lambda _: self.functions_buttons[0]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[1]. bind('<Enter>', lambda _: self.functions_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[1]. bind('<Leave>', lambda _: self.functions_buttons[1]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[2]. bind('<Enter>', lambda _: self.functions_buttons[2]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[2]. bind('<Leave>', lambda _: self.functions_buttons[2]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[3]. bind('<Enter>', lambda _: self.functions_buttons[3]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[3]. bind('<Leave>', lambda _: self.functions_buttons[3]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[4]. bind('<Enter>', lambda _: self.functions_buttons[4]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[4]. bind('<Leave>', lambda _: self.functions_buttons[4]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[5]. bind('<Enter>', lambda _: self.functions_buttons[5]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[5]. bind('<Leave>', lambda _: self.functions_buttons[5]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[6]. bind('<Enter>', lambda _: self.functions_buttons[6]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[6]. bind('<Leave>', lambda _: self.functions_buttons[6]. configure(bg=settings.COLOR_GRAY))
+        self.functions_buttons[7]. bind('<Enter>', lambda _: self.functions_buttons[7]. configure(bg=settings.COLOR_LIGHTGRAY))
+        self.functions_buttons[7]. bind('<Leave>', lambda _: self.functions_buttons[7]. configure(bg=settings.COLOR_GRAY))
+        
     def onResize(self, _):
         width       = self.window.winfo_width()
         height      = self.window.winfo_height()
