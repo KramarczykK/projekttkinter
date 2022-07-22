@@ -1,4 +1,9 @@
-from tkinter import CENTER
+from operator import index
+from tkinter import CENTER, StringVar
+import xdrlib
+
+from kiwisolver import Expression
+from numpy import delete
 from imports import *
 
 
@@ -10,7 +15,8 @@ class Calculator:
         self.window.geometry('+%i+%i' % ((self.window.winfo_screenwidth() - self.width) / 2, (self.window.winfo_screenheight() - self.height) / 2))
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
-
+        self.action_list = []
+        self.sign = ''
         # images
         self.photo = tk.PhotoImage(file = r"C:\Program Files\python\tkinter\projekttkinter\cofka.png")
         
@@ -23,42 +29,62 @@ class Calculator:
         self.operations_B_frame = ttk.Frame(self.window, style='FrameE.TFrame')
         self.operations_C_frame = ttk.Frame(self.window, style='FrameF.TFrame')
 
+       
+        e = tk.Entry(self.window, width = 35, borderwidth = 5)
+        #e.grid(self.screen_top_frame)
+        
+        # number = tk.StringVar()
+        # def button_click(number):
+        #     # global Expression
+        #     # expression = expression + str(number)
+        #     # tk.input_text.set(expression)
+        #     e.delete(0, tk.END)
+        #     e.insert(0, number)
+        
+        self.number = tk.StringVar(value = '0')
+
+             # Top screen
+        self.screen_top = ttk.Label(self.screen_top_frame, textvariable = self.number , anchor='e', style='TopScreen.TLabel')
+
+        
+    
         # Buttons
         self.number_buttons = [
-            tk.Button(self.numbers_frame, text='7'  , command=lambda: print('7')),
-            tk.Button(self.numbers_frame, text='8'  , command=lambda: print('8')),
-            tk.Button(self.numbers_frame, text='9'  , command=lambda: print('9')),
-            tk.Button(self.numbers_frame, text='4'  , command=lambda: print('4')),
-            tk.Button(self.numbers_frame, text='5'  , command=lambda: print('5')),
-            tk.Button(self.numbers_frame, text='6'  , command=lambda: print('6')),
-            tk.Button(self.numbers_frame, text='1'  , command=lambda: print('1')),
-            tk.Button(self.numbers_frame, text='2'  , command=lambda: print('2')),
-            tk.Button(self.numbers_frame, text='3'  , command=lambda: print('3')),
-            tk.Button(self.numbers_frame, text='+/-', command=lambda: print('+/-')),
-            tk.Button(self.numbers_frame, text='0'  , command=lambda: print('0')),
+            tk.Button(self.numbers_frame, text='7'  , command=lambda: self.button_click(7)),
+            tk.Button(self.numbers_frame, text='8'  , command=lambda: self.button_click(8)),
+            tk.Button(self.numbers_frame, text='9'  , command=lambda: self.button_click(9)),
+            tk.Button(self.numbers_frame, text='4'  , command=lambda: self.button_click(4)),
+            tk.Button(self.numbers_frame, text='5'  , command=lambda: self.button_click(5)),
+            tk.Button(self.numbers_frame, text='6'  , command=lambda: self.button_click(6)),
+            tk.Button(self.numbers_frame, text='1'  , command=lambda: self.button_click(1)),
+            tk.Button(self.numbers_frame, text='2'  , command=lambda: self.button_click(2)),
+            tk.Button(self.numbers_frame, text='3'  , command=lambda: self.button_click(3)),
+            tk.Button(self.numbers_frame, text='+/-', command=lambda: self.button_changingsign()),
+            tk.Button(self.numbers_frame, text='0'  , command=lambda: self.button_click(0)),
             tk.Button(self.numbers_frame, text='.'  , command=lambda: print('.')),
         ]
         
         self.operations_buttons = [
-            tk.Button(self.operations_B_frame, text='X'  , command=lambda: print('X')),
-            tk.Button(self.operations_B_frame, text='-'  , command=lambda: print('-')),
-            tk.Button(self.operations_B_frame, text='+'  , command=lambda: print('+')),
-            tk.Button(self.operations_B_frame, text='='  , command=lambda: print('=')),
+            tk.Button(self.operations_B_frame, text='X'  , command=lambda: self.button_multiply()),
+            tk.Button(self.operations_B_frame, text='-'  , command=lambda: self.button_minus()),
+            tk.Button(self.operations_B_frame, text='+'  , command=lambda: self.button_add()),
+            tk.Button(self.operations_B_frame, text='='  , command=lambda: self.button_equal()),
         ]
 
         self.functions_buttons = [
-            tk.Button(self.operations_A_frame, text='%'  , command=lambda: print('%')),
-            tk.Button(self.operations_A_frame, text='CE'  , command=lambda: print('CE')),
-            tk.Button(self.operations_A_frame, text='C'  , command=lambda: print('C')),
-            tk.Button(self.operations_A_frame, text='Click me', image = self.photo  , command=lambda: print('photo')),
-            tk.Button(self.operations_A_frame, text='1/x'  , command=lambda: print('1/x')),    
-            tk.Button(self.operations_A_frame, text='x^2'  , command=lambda: print('x^2')),
-            tk.Button(self.operations_A_frame, text='sqrt(2)'  , command=lambda: print('sqrt(2)')),
-            tk.Button(self.operations_A_frame, text='/'  , command=lambda: print('/')),
+            tk.Button(self.operations_A_frame, text='%'  , command= self.button_percentage()),
+            tk.Button(self.operations_A_frame, text='CE'  , command=lambda: self.button_partclear()),
+            tk.Button(self.operations_A_frame, text='C'  , command=lambda: self.button_clear()),
+            tk.Button(self.operations_A_frame, text='\u232b', command=lambda: print('backspace')),
+            tk.Button(self.operations_A_frame, text='1/x'  , command=lambda: self.button_homographic()),    
+            tk.Button(self.operations_A_frame, text='x\u00B2'  , command=lambda: self.button_square()),
+            tk.Button(self.operations_A_frame, text='\u221Ax'  , command=lambda: self.button_sqrt()),
+            tk.Button(self.operations_A_frame, text='\u00F7'  , command=lambda: self.button_division()),
         ]
+    
+    
 
-        # Top screen
-        self.screen_top = ttk.Label(self.screen_top_frame, text='0', anchor='e', style='TopScreen.TLabel')
+        
 
         # Right screen
         self.figure       = Figure()
@@ -215,6 +241,117 @@ class Calculator:
         self.ax.set_ylabel('y')
 
         self.canvas.draw()
+    
+    def button_click(self, nmb):
+        self.number.set(self.number.get().lstrip('0') + str(nmb))
+        self.action_list.append(self.number.get())
+ 
+    def button_clear(self):
+       button = self.number.set(0)
+       self.sign = "clear"
+       if self.sign == "clear":
+            self.screen_top.configure(font = settings.TOP_SCREEN_FONT)
+
+
+    def button_add(self):
+        first_number = self.number.get()
+        self.f_num = int(first_number)
+        self.number.set(0)
+        self.sign = "addition"
+
+    def button_minus(self):
+        first_number = self.number.get()
+        self.f_num = int(first_number)
+        self.number.set(0)
+        self.sign = "minus"
+
+    def button_multiply(self):
+        first_number = self.number.get()
+        self.f_num = int(first_number)
+        self.number.set(0)
+        self.sign = "multiply"
+
+    def button_division(self):
+        first_number = self.number.get()
+        self.f_num = int(first_number)
+        self.number.set(0)
+        self.sign = "division"
+
+    def button_equal(self):
+        second_number = self.number.get()
+        self.number.set(0)
+        if self.sign == "addition":
+            answer = self.number.set(self.f_num + int(second_number))
+        elif self.sign == "minus":
+            answer = self.number.set(self.f_num - int(second_number))
+        elif self.sign == "multiply":
+            answer = self.number.set(self.f_num * int(second_number))
+        elif self.sign == "division":
+            if int(second_number) != 0:
+                answer = self.number.set(self.f_num / int(second_number))
+            else:                              
+                self.screen_top.configure(font = settings.DIVIDING_BY_0_FONT)
+                self.number.set(" Nie można dzielić przez 0")
+
+    def button_changingsign(self):
+        nmb = self.number.get()
+        if int(nmb) > 0:
+            self.number.set(-abs( int(self.number.get())))
+        else:
+            self.number.set(abs( int(self.number.get())))
+       
+
+    def button_square(self):        
+        self.number.set(int(self.number.get()) * int(self.number.get()))
+
+    def button_sqrt(self):
+        self.number.set(math.sqrt(int(self.number.get())))
+
+    def button_homographic(self):
+        self.number.set(1 / int(self.number.get()))
+
+
+    def button_partclear(self):
+        self.action_list.pop(-1)
+        self.number.set(self.action_list[-2])
+        print(self.action_list)
+
+    def button_percentage(self):
+        first_n = self.number.get()
+        self.f_n = int(first_n)
+        self.number.set(0)
+        # for n in range(len(self.operations_buttons)):
+        #     if self.operations_buttons[n] == 0:            
+        #         second_n = self.number.get()
+        #         self.number.set((self.f_n * 100)/ int(second_n))
+        #         print(self.number)
+        print(self.sign)
+        if self.sign == "multiply":
+            second_n = self.number.get()
+            self.number.set(0)
+            self.number.set((self.f_n * 100)/ int(second_n))
+            print(self.number)
+        
+
+
+                
+
+
+
+            
+
+
+
+
+
+
+
+
+          
+           
+        
+
+        
 
     def mainloop(self):
         self.window.mainloop()

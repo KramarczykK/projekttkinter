@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import tkinter           as tk
 import settings
 import random
+import math
 
 from tkinter                           import ttk
 from matplotlib.figure                 import Figure

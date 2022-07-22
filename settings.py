@@ -11,6 +11,7 @@ COLOR_WHITE     = '#ffffff'
 
 TOP_SCREEN_FONT = ('Helvetica', 26)
 BUTTON_FONT     = ('Helvetica', 20)
+DIVIDING_BY_0_FONT     = ('Helvetica', 15)
 
 if __name__ == '__main__':
     pass
