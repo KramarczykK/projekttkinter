@@ -16,6 +16,7 @@ class Calculator:
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
         self.action_list = []
+        self.percentage_list = []
         self.sign = ''
         # images
         self.photo = tk.PhotoImage(file = r"C:\Program Files\python\tkinter\projekttkinter\cofka.png")
@@ -61,7 +62,7 @@ class Calculator:
             tk.Button(self.numbers_frame, text='3'  , command=lambda: self.button_click(3)),
             tk.Button(self.numbers_frame, text='+/-', command=lambda: self.button_changingsign()),
             tk.Button(self.numbers_frame, text='0'  , command=lambda: self.button_click(0)),
-            tk.Button(self.numbers_frame, text='.'  , command=lambda: print('.')),
+            tk.Button(self.numbers_frame, text='.'  , command=lambda: self.button_comma('.')),
         ]
         
         self.operations_buttons = [
@@ -72,10 +73,10 @@ class Calculator:
         ]
 
         self.functions_buttons = [
-            tk.Button(self.operations_A_frame, text='%'  , command= self.button_percentage()),
+            tk.Button(self.operations_A_frame, text='%'  , command= lambda: self.button_percentage()),
             tk.Button(self.operations_A_frame, text='CE'  , command=lambda: self.button_partclear()),
             tk.Button(self.operations_A_frame, text='C'  , command=lambda: self.button_clear()),
-            tk.Button(self.operations_A_frame, text='\u232b', command=lambda: print('backspace')),
+            tk.Button(self.operations_A_frame, text='\u232b', command=lambda: self.button_backspace()),
             tk.Button(self.operations_A_frame, text='1/x'  , command=lambda: self.button_homographic()),    
             tk.Button(self.operations_A_frame, text='x\u00B2'  , command=lambda: self.button_square()),
             tk.Button(self.operations_A_frame, text='\u221Ax'  , command=lambda: self.button_sqrt()),
@@ -244,7 +245,9 @@ class Calculator:
     
     def button_click(self, nmb):
         self.number.set(self.number.get().lstrip('0') + str(nmb))
-        self.action_list.append(self.number.get())
+        perc = float(self.number.get())
+        self.percentage_list.append(perc)
+       
  
     def button_clear(self):
        button = self.number.set(0)
@@ -255,44 +258,49 @@ class Calculator:
 
     def button_add(self):
         first_number = self.number.get()
-        self.f_num = int(first_number)
+        self.f_num = float(first_number)
         self.number.set(0)
         self.sign = "addition"
+        self.action_list.append(self.f_num)
 
     def button_minus(self):
         first_number = self.number.get()
-        self.f_num = int(first_number)
+        self.f_num = float(first_number)
         self.number.set(0)
         self.sign = "minus"
+        self.action_list.append(self.f_num)
 
     def button_multiply(self):
         first_number = self.number.get()
-        self.f_num = int(first_number)
+        self.f_num = float(first_number)
         self.number.set(0)
         self.sign = "multiply"
+        self.action_list.append(self.f_num)
 
     def button_division(self):
         first_number = self.number.get()
-        self.f_num = int(first_number)
+        self.f_num = float(first_number)
         self.number.set(0)
         self.sign = "division"
+        self.action_list.append(self.f_num)
 
     def button_equal(self):
         second_number = self.number.get()
         self.number.set(0)
         if self.sign == "addition":
-            answer = self.number.set(self.f_num + int(second_number))
+            answer = self.number.set(self.f_num + float(second_number))
         elif self.sign == "minus":
-            answer = self.number.set(self.f_num - int(second_number))
+            answer = self.number.set(self.f_num - float(second_number))
         elif self.sign == "multiply":
-            answer = self.number.set(self.f_num * int(second_number))
+            answer = self.number.set(self.f_num * float(second_number))
         elif self.sign == "division":
             if int(second_number) != 0:
-                answer = self.number.set(self.f_num / int(second_number))
+                answer = self.number.set(self.f_num / float(second_number))
             else:                              
                 self.screen_top.configure(font = settings.DIVIDING_BY_0_FONT)
                 self.number.set(" Nie można dzielić przez 0")
-
+        self.action_list.append(self.number.get())
+        
     def button_changingsign(self):
         nmb = self.number.get()
         if int(nmb) > 0:
@@ -312,26 +320,22 @@ class Calculator:
 
 
     def button_partclear(self):
-        self.action_list.pop(-1)
-        self.number.set(self.action_list[-2])
+        del self.action_list[-1]
+        self.number.set(self.action_list[-1])
         print(self.action_list)
 
     def button_percentage(self):
-        first_n = self.number.get()
-        self.f_n = int(first_n)
-        self.number.set(0)
-        # for n in range(len(self.operations_buttons)):
-        #     if self.operations_buttons[n] == 0:            
-        #         second_n = self.number.get()
-        #         self.number.set((self.f_n * 100)/ int(second_n))
-        #         print(self.number)
-        print(self.sign)
-        if self.sign == "multiply":
-            second_n = self.number.get()
-            self.number.set(0)
-            self.number.set((self.f_n * 100)/ int(second_n))
-            print(self.number)
-        
+        self.number.set(int(self.number.get()) / 100)
+
+    def button_comma(self, cmm):
+        com_nmb = self.number.get()
+        self.number.set(com_nmb + str(cmm))
+       
+    def button_backspace(self):
+        del self.percentage_list[-1]
+        self.number.set(self.percentage_list[-1])
+           
+
 
 
                 
