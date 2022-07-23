@@ -5,6 +5,7 @@ import xdrlib
 from kiwisolver import Expression
 from numpy import delete
 from imports import *
+from math import sqrt, sin, cos, log10
 
 
 class Calculator:
@@ -18,8 +19,7 @@ class Calculator:
         self.action_list = []
         self.percentage_list = []
         self.sign = ''
-        # images
-        self.photo = tk.PhotoImage(file = r"C:\Program Files\python\tkinter\projekttkinter\cofka.png")
+        
         
   
         # Frames
@@ -30,24 +30,19 @@ class Calculator:
         self.operations_B_frame = ttk.Frame(self.window, style='FrameE.TFrame')
         self.operations_C_frame = ttk.Frame(self.window, style='FrameF.TFrame')
 
-       
-        e = tk.Entry(self.window, width = 35, borderwidth = 5)
-        #e.grid(self.screen_top_frame)
         
-        # number = tk.StringVar()
-        # def button_click(number):
-        #     # global Expression
-        #     # expression = expression + str(number)
-        #     # tk.input_text.set(expression)
-        #     e.delete(0, tk.END)
-        #     e.insert(0, number)
         
         self.number = tk.StringVar(value = '0')
+        self.txtplot = tk.StringVar(value = '0')
+        self.var =  tk.StringVar()
 
-             # Top screen
+        # Top screen
         self.screen_top = ttk.Label(self.screen_top_frame, textvariable = self.number , anchor='e', style='TopScreen.TLabel')
 
-        
+        # Right - bot screen
+        self.screen_rightbot = ttk.Label(self.operations_C_frame, textvariable = self.txtplot, anchor = 'e', style = 'FrameF.TFrame') 
+
+       
     
         # Buttons
         self.number_buttons = [
@@ -92,7 +87,20 @@ class Calculator:
         self.ax           = self.figure.add_subplot(111)
         self.canvas       = FigureCanvasTkAgg(self.figure, self.screen_right_frame)        
         self.screen_right = self.canvas.get_tk_widget()
+
+        # Placeholder for entry
+        placeholder = "Write your equation"
+        self.placeholder = placeholder
+        self.state = 'normal'
+
+        # Entry
+        self.right_entry = tk.Entry(self.operations_C_frame, textvariable = self.var)
+        self.button_func = tk.Button(self.operations_C_frame, text = "Enter equation", command = lambda: self.drawChart())
+        self.screen_right.pack()
+        self.put_placeholder()
         
+
+        # Styling  
     def setStyle(self):
         self.window.configure(bg=settings.COLOR_GRAY)
 
@@ -102,7 +110,7 @@ class Calculator:
         style.configure('FrameC.TFrame', background='blue')
         style.configure('FrameD.TFrame', background='yellow')
         style.configure('FrameE.TFrame', background='purple')
-        style.configure('FrameF.TFrame', background='orange')
+        style.configure('FrameF.TFrame', background= settings.COLOR_GRAY,  FONT = settings.RIGHT_BOT_SCREEN_FONT)
 
         style.configure('TopScreen.TLabel', background=settings.COLOR_CREME, font=settings.TOP_SCREEN_FONT)
 
@@ -115,6 +123,11 @@ class Calculator:
         for button_function in self.functions_buttons:
             button_function.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
     
+        self.button_func.configure(bg=settings.COLOR_GRAY, fg=settings.COLOR_WHITE, font=settings.BUTTON_FONT, borderwidth=0, activebackground=settings.COLOR_DARKGRAY, activeforeground=settings.COLOR_WHITE)
+        self.right_entry.configure(bg = settings.COLOR_LIGHTGRAY, font = settings.RIGHT_BOT_SCREEN_FONT, fg=settings.COLOR_WHITE)
+
+    
+    # Arragement
     def placeComponents(self):
         # Frames
         self.screen_top_frame  .place(x=0   * self.width, y=0   * self.height, width=0.4 * self.width, height=0.2 * self.height)
@@ -142,6 +155,7 @@ class Calculator:
             if i % 1 == 0:
                 j += 0.25
 
+
         # Function buttons
         function_frame_width  = 0.4 * self.width
         function_frame_height = 0.2  * self.height
@@ -149,7 +163,12 @@ class Calculator:
         for i, button_function in enumerate(self.functions_buttons):
             button_function.place(x=(i % 4) / 4 * function_frame_width, y=j * function_frame_height, width = function_frame_width / 4, height = function_frame_height / 2)
             if i % 4 == 3:
-                j += 0.5       
+                j += 0.5    
+
+        b_frame_width = 0.6 * self.width
+        b_frame_height = 0.2 * self.height
+        self.button_func.place(x = 0, y =  b_frame_height / 2, width = b_frame_width, height  = b_frame_height / 2 )  
+        self.right_entry.place(x = b_frame_width / 5 , y = 0, width = 3 * b_frame_width / 5, height = b_frame_height / 2 ) 
 
         # Screens
         self.screen_top  .place(x=settings.SCREEN_OFFSET, y=settings.SCREEN_OFFSET, width=0.4 * self.width - 2 * settings.SCREEN_OFFSET, height=0.2 * self.height - 2 * settings.SCREEN_OFFSET)
@@ -157,12 +176,16 @@ class Calculator:
 
         self.window.update()
 
+    # Bindings
     def setBindings(self):
         self.window.bind('<Escape>', self.onExit)
         self.window.bind('<Configure>', self.onResize)
-        self.window.bind('q', lambda _: self.drawChart())
 
-        # number buttons
+        self.right_entry.bind("<FocusIn>", self.foc_in)
+        self.right_entry.bind("<FocusOut>", self.foc_out)
+        
+
+        # Color button change
         self.number_buttons[0]. bind('<Enter>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.number_buttons[0]. bind('<Leave>', lambda _: self.number_buttons[0]. configure(bg=settings.COLOR_GRAY))
         self.number_buttons[1]. bind('<Enter>', lambda _: self.number_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
@@ -188,7 +211,7 @@ class Calculator:
         self.number_buttons[11].bind('<Enter>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_LIGHTGRAY))
         self.number_buttons[11].bind('<Leave>', lambda _: self.number_buttons[11].configure(bg=settings.COLOR_GRAY))
 
-        # operation buttons
+        
         self.operations_buttons[0]. bind('<Enter>', lambda _: self.operations_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.operations_buttons[0]. bind('<Leave>', lambda _: self.operations_buttons[0]. configure(bg=settings.COLOR_GRAY))
         self.operations_buttons[1]. bind('<Enter>', lambda _: self.operations_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
@@ -198,7 +221,7 @@ class Calculator:
         self.operations_buttons[3]. bind('<Enter>', lambda _: self.operations_buttons[3]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.operations_buttons[3]. bind('<Leave>', lambda _: self.operations_buttons[3]. configure(bg=settings.COLOR_GRAY))
 
-        # function buttons 
+        
         self.functions_buttons[0]. bind('<Enter>', lambda _: self.functions_buttons[0]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.functions_buttons[0]. bind('<Leave>', lambda _: self.functions_buttons[0]. configure(bg=settings.COLOR_GRAY))
         self.functions_buttons[1]. bind('<Enter>', lambda _: self.functions_buttons[1]. configure(bg=settings.COLOR_LIGHTGRAY))
@@ -216,6 +239,7 @@ class Calculator:
         self.functions_buttons[7]. bind('<Enter>', lambda _: self.functions_buttons[7]. configure(bg=settings.COLOR_LIGHTGRAY))
         self.functions_buttons[7]. bind('<Leave>', lambda _: self.functions_buttons[7]. configure(bg=settings.COLOR_GRAY))
         
+    # Screen settings
     def onResize(self, _):
         width       = self.window.winfo_width()
         height      = self.window.winfo_height()
@@ -231,32 +255,47 @@ class Calculator:
     def onExit(self, _):
         self.window.destroy()
 
+     
     def drawChart(self):
+        '''Chart creating'''
         self.ax.clear()
 
-        X = np.linspace(-5, 5, 100)
-        Y = [X, X**2, X**3, X**4]
-        self.ax.plot(X, random.choice(Y))
-        self.ax.set_title('Test', weight='bold')
-        self.ax.set_xlabel('x')
-        self.ax.set_ylabel('y')
+        self.X = np.linspace(-5, 5, 100)
+        self.equation = self.var.get()
+        self.Y = []
 
+        self.equation = self.equation.replace('^', '**')
+
+        try:
+            for x in self.X:
+                self.Y.append(eval(self.equation))
+        except Exception as e:
+            print(e)
+            return 
+        self.ax.plot(self.X,self.Y)
+        
         self.canvas.draw()
-    
+
+       
+    # Functions for buttons
+
     def button_click(self, nmb):
+        '''Button with number'''
         self.number.set(self.number.get().lstrip('0') + str(nmb))
         perc = float(self.number.get())
         self.percentage_list.append(perc)
        
  
-    def button_clear(self):
-       button = self.number.set(0)
-       self.sign = "clear"
-       if self.sign == "clear":
+    def button_clear(self):       
+        '''Clear button'''
+        button = self.number.set(0)
+        self.sign = "clear"
+        if self.sign == "clear":
             self.screen_top.configure(font = settings.TOP_SCREEN_FONT)
 
 
     def button_add(self):
+        '''Add button'''
         first_number = self.number.get()
         self.f_num = float(first_number)
         self.number.set(0)
@@ -264,6 +303,7 @@ class Calculator:
         self.action_list.append(self.f_num)
 
     def button_minus(self):
+        '''Minus button'''
         first_number = self.number.get()
         self.f_num = float(first_number)
         self.number.set(0)
@@ -271,6 +311,7 @@ class Calculator:
         self.action_list.append(self.f_num)
 
     def button_multiply(self):
+        '''Multiply button'''
         first_number = self.number.get()
         self.f_num = float(first_number)
         self.number.set(0)
@@ -278,6 +319,7 @@ class Calculator:
         self.action_list.append(self.f_num)
 
     def button_division(self):
+        '''Division button'''
         first_number = self.number.get()
         self.f_num = float(first_number)
         self.number.set(0)
@@ -285,6 +327,7 @@ class Calculator:
         self.action_list.append(self.f_num)
 
     def button_equal(self):
+        '''Equal sign button'''
         second_number = self.number.get()
         self.number.set(0)
         if self.sign == "addition":
@@ -302,6 +345,7 @@ class Calculator:
         self.action_list.append(self.number.get())
         
     def button_changingsign(self):
+        '''Change sign button'''
         nmb = self.number.get()
         if int(nmb) > 0:
             self.number.set(-abs( int(self.number.get())))
@@ -309,53 +353,52 @@ class Calculator:
             self.number.set(abs( int(self.number.get())))
        
 
-    def button_square(self):        
+    def button_square(self): 
+        '''Square button'''
         self.number.set(int(self.number.get()) * int(self.number.get()))
 
     def button_sqrt(self):
+        '''Sqrt button'''
         self.number.set(math.sqrt(int(self.number.get())))
 
     def button_homographic(self):
+        '''1/x button'''
         self.number.set(1 / int(self.number.get()))
 
-
     def button_partclear(self):
+        '''Part-clear button'''
         del self.action_list[-1]
         self.number.set(self.action_list[-1])
         print(self.action_list)
 
     def button_percentage(self):
+        '''Percent sign button'''
         self.number.set(int(self.number.get()) / 100)
 
     def button_comma(self, cmm):
+        '''Comma button'''
         com_nmb = self.number.get()
         self.number.set(com_nmb + str(cmm))
        
     def button_backspace(self):
+        '''Backspace button'''
         del self.percentage_list[-1]
         self.number.set(self.percentage_list[-1])
-           
 
+    def put_placeholder(self):
+        '''Placeholder function'''
+        self.state = 'empty'
+        self.right_entry.insert(0, self.placeholder)
 
-
-                
-
-
-
+    def foc_in(self, *args):
+        if self.state == 'empty':
+            self.state = 'normal'
+            self.right_entry.delete('0', 'end')
             
-
-
-
-
-
-
-
-
-          
-           
-        
-
-        
+    def foc_out(self, *args):
+        if not self.right_entry.get():
+            self.put_placeholder()
+     
 
     def mainloop(self):
         self.window.mainloop()
@@ -367,6 +410,8 @@ if __name__ == '__main__':
         calc.setStyle()
         calc.placeComponents()
         calc.setBindings()
+        
+        
         
         calc.mainloop()
     except Exception as e:

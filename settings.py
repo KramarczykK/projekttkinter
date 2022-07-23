@@ -10,6 +10,7 @@ COLOR_CREME     = '#f2eeed'
 COLOR_WHITE     = '#ffffff'
 
 TOP_SCREEN_FONT = ('Helvetica', 26)
+RIGHT_BOT_SCREEN_FONT = ('Helvetica', 16)
 BUTTON_FONT     = ('Helvetica', 20)
 DIVIDING_BY_0_FONT     = ('Helvetica', 15)
 
