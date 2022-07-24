@@ -1,2 +1,4 @@
 __pycache__/
 calc2.py 
+build/
+dist/

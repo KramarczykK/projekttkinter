@@ -1,12 +1,20 @@
 from operator import index
 from tkinter import CENTER, StringVar
 import xdrlib
+import sys
+import os
 
 from kiwisolver import Expression
 from numpy import delete
 from imports import *
 from math import sqrt, sin, cos, log10
 
+def resourcePath(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath('.')
+    return os.path.join(base_path, relative_path)
 
 class Calculator:
     def __init__(self):
@@ -14,6 +22,7 @@ class Calculator:
 
         self.window = tk.Tk()
         self.window.geometry('+%i+%i' % ((self.window.winfo_screenwidth() - self.width) / 2, (self.window.winfo_screenheight() - self.height) / 2))
+        self.window.iconbitmap(resourcePath('calc.ico'))
         self.window.minsize(self.width, self.height)
         self.window.title(settings.WINDOW_TITLE)
         self.action_list = []
