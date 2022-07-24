@@ -1,6 +1,6 @@
 WINDOW_MIN_SIZE = (800, 600)
 WINDOW_TITLE    = 'Graphing Calculator'
-SCREEN_OFFSET   = 5
+SCREEN_OFFSET   = (5, 10)
 BUTTON_OFFSET   = 2
 
 COLOR_GRAY      = '#4a4844'
